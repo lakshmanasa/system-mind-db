@@ -1,0 +1,11 @@
+#%RAML 1.0 Trait
+
+      body:
+        application/json:
+          type: db-type.lib
+          example: !include ../Example/put-requestBody.json
+      responses:
+        201:
+          body:
+            application/json:
+              example: !include ../Example/put-responseBody.json

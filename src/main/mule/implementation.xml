@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+	<flow name="post-account-dbsapi" doc:id="1278259e-05ea-45bc-bee6-c38c53bd2940" >
+		<db:insert doc:name="Insert" doc:id="a78d813e-a2d5-41ab-8d3a-78437c40b78f" config-ref="Database_Config">
+			<db:sql ><![CDATA[insert into account values(:accname,:accnumber,:firstname,:lastname,:middlename,:phn,:email)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	accname: payload.AccountName,
+	accnumber: payload.AccountNumber,
+	firstname: payload.FirstName,
+	lastname: payload.LastName,
+	middlename: payload.MiddleName,
+	phn: payload.Phone,
+	email: payload.Email
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="df926b47-4c53-4eb2-be26-2962cd019d5d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="getById-account-dbsapi" doc:id="3d52da70-99d8-4c62-8147-8228efec3435" >
+		<db:select doc:name="Select" doc:id="0dcb856c-664c-49e4-aa86-bb48e542a6a3" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from account where accountnumber =:accnum]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	accnum: attributes.uriParams.id
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="46c7906f-09a5-4a05-94a5-06f2e14d19ed" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="update-db-account-dbsapi" doc:id="8230403a-ebde-457d-831e-fecc8e01d69a" >
+		<db:update doc:name="Update" doc:id="e41b906d-e188-40a5-af5d-04d66ba81f26" config-ref="Database_Config">
+			<db:sql ><![CDATA[update account set accountname =:accname,firstname =:fn,lastname =:ln,middlename =:mn,phone =:phn,email =:email where accountnumber =:accnum]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	accnum: payload.AccountNumber,
+	accname: payload.AccountName,
+	fn: payload.FirstName,
+	ln: payload.LastName,
+	mn: payload.MiddleName,
+	phn: payload.Phone,
+	email: payload.Email
+}]]]></db:input-parameters>
+		</db:update>
+		<ee:transform doc:name="Transform Message" doc:id="bb6c2515-149c-4fc2-ad8c-3292885f6a80" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

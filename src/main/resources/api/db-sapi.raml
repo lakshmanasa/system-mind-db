@@ -1,0 +1,26 @@
+#%RAML 1.0
+title: db-sapi
+
+uses:
+  db-type: library/library-datatype.raml
+
+traits:
+  post-req: !include Traits/post-trait.raml
+  put-req: !include Traits/put-trait.raml
+  get-req: !include Traits/get-trait.raml
+
+
+resourceTypes:
+  post-put-met: !include resourceTypes/post-put-resourceType.raml
+  get-met: !include resourceTypes/get-resourceType.raml 
+
+
+/sapi/db/accounts:
+    type:
+      post-put-met
+
+    /{id}:
+      type:
+        get-met
+
+
